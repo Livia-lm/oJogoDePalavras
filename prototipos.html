@@ -1,0 +1,906 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f2f1ed">
+  <title>Três direções | Puxa Palavra</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: "DM Sans", "Segoe UI", sans-serif;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+      --ink: #202a29;
+      --muted: #56615f;
+      --paper: #f2f1ed;
+      --line: #d2d5d0;
+      --focus: #115ee4;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      min-width: 320px;
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+    }
+
+    button, input { font: inherit; }
+    button { color: inherit; }
+
+    button:focus-visible,
+    input:focus-visible,
+    a:focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 3px;
+    }
+
+    .review-shell {
+      width: min(100% - 48px, 1220px);
+      margin: 0 auto;
+      padding: 28px 0 48px;
+    }
+
+    .review-header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 0 2px 20px;
+    }
+
+    .review-kicker,
+    .review-index,
+    .concept-number,
+    .eyebrow,
+    .section-label,
+    .field-label,
+    .attempt-count-label {
+      font-family: "DM Mono", "Consolas", monospace;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .review-kicker { margin: 0 0 6px; color: #52605e; }
+    .review-title { margin: 0; font-size: 20px; font-weight: 600; }
+    .review-index { margin: 0; color: #52605e; }
+
+    .concept-picker {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px;
+      border: 1px solid #cdd1cc;
+      border-radius: 9px;
+      background: #e9e9e4;
+    }
+
+    .concept-tab {
+      min-height: 42px;
+      padding: 0 15px;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: #424e4b;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .concept-tab[aria-pressed="true"] {
+      background: #fff;
+      color: #172321;
+      box-shadow: 0 1px 3px rgb(25 36 33 / 13%);
+    }
+
+    .concept-tab:hover { color: #111; }
+
+    .concept-caption {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      min-height: 52px;
+      padding: 10px 2px 13px;
+      color: #46514f;
+      font-size: 13px;
+    }
+
+    .concept-caption p { margin: 0; }
+    .concept-caption strong { color: #172321; font-weight: 600; }
+    .demo-note {
+      flex: 0 0 auto;
+      color: #596461;
+      font-family: "DM Mono", "Consolas", monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+    }
+
+    .game-stage {
+      --stage-bg: #f7f8f4;
+      --stage-ink: #202a29;
+      --stage-muted: #56615f;
+      --stage-line: #d5d9d4;
+      --accent: #146b63;
+      --accent-strong: #10564f;
+      --accent-soft: #dcece8;
+      --warm: #c94f3d;
+      --warm-soft: #f4e4df;
+      position: relative;
+      overflow: hidden;
+      min-height: 660px;
+      padding: 30px 42px 36px;
+      border: 1px solid #d3d5d0;
+      border-radius: 10px;
+      background: var(--stage-bg);
+      color: var(--stage-ink);
+      box-shadow: 0 12px 32px rgb(33 43 39 / 7%);
+      transition: background-color 220ms ease, color 220ms ease;
+    }
+
+    .game-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 43px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--stage-line);
+    }
+
+    .wordmark {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 5px;
+      color: var(--stage-ink);
+      font-size: 17px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .wordmark-mark { color: var(--accent); }
+
+    .mode-picker {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      padding: 3px;
+      border: 1px solid var(--stage-line);
+      border-radius: 6px;
+      background: color-mix(in srgb, var(--stage-bg), var(--stage-ink) 4%);
+    }
+
+    .mode-button {
+      min-height: 34px;
+      padding: 0 11px;
+      border: 0;
+      border-radius: 4px;
+      background: transparent;
+      color: var(--stage-muted);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .mode-button[aria-pressed="true"] {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .mode-button:hover { color: var(--stage-ink); }
+    .mode-button[aria-pressed="true"]:hover { color: #fff; }
+
+    .score {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-height: 38px;
+      padding: 0 12px;
+      border: 1px solid var(--stage-line);
+      border-radius: 5px;
+      color: var(--stage-muted);
+      font-size: 12px;
+    }
+
+    .score strong {
+      color: var(--accent-strong);
+      font-family: "DM Mono", "Consolas", monospace;
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .game-grid {
+      display: grid;
+      grid-template-columns: minmax(0, .92fr) minmax(360px, 1.08fr);
+      gap: clamp(36px, 6vw, 86px);
+      max-width: 1060px;
+      margin: 72px auto 0;
+    }
+
+    .round-copy { align-self: center; }
+    .eyebrow { margin: 0 0 18px; color: var(--accent-strong); }
+
+    .round-title {
+      max-width: 470px;
+      margin: 0;
+      font-family: "Fraunces", Georgia, serif;
+      font-size: 56px;
+      font-weight: 500;
+      letter-spacing: 0;
+      line-height: 1.02;
+    }
+
+    .round-subtitle {
+      max-width: 340px;
+      margin: 19px 0 0;
+      color: var(--stage-muted);
+      font-size: 16px;
+      line-height: 1.55;
+    }
+
+    .round-context {
+      margin: 12px 0 0;
+      color: var(--stage-muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .guess-form { margin-top: 35px; }
+    .field-label { display: block; margin-bottom: 9px; color: var(--stage-muted); }
+
+    .input-row {
+      display: flex;
+      align-items: stretch;
+      gap: 8px;
+    }
+
+    .guess-input {
+      width: 100%;
+      min-width: 0;
+      min-height: 54px;
+      padding: 0 15px;
+      border: 1px solid var(--stage-line);
+      border-radius: 5px;
+      background: var(--stage-bg);
+      color: var(--stage-ink);
+      font-size: 16px;
+    }
+
+    .guess-input::placeholder { color: var(--stage-muted); opacity: .8; }
+
+    .submit-button,
+    .next-button {
+      min-height: 54px;
+      flex: 0 0 auto;
+      padding: 0 20px;
+      border: 0;
+      border-radius: 5px;
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 700;
+      transition: transform 120ms ease, background-color 120ms ease;
+    }
+
+    .submit-button:hover,
+    .next-button:hover { background: var(--accent-strong); }
+    .submit-button:active,
+    .next-button:active { transform: translateY(1px); }
+
+    .give-up-button {
+      min-height: 42px;
+      margin-top: 8px;
+      padding: 0 12px;
+      border: 1px solid var(--stage-line);
+      border-radius: 5px;
+      background: transparent;
+      color: var(--stage-muted);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .give-up-button:hover { border-color: var(--stage-ink); color: var(--stage-ink); }
+
+    .result-status {
+      min-height: 42px;
+      margin: 13px 0 0;
+      color: var(--stage-muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .result-status[data-state="win"] {
+      color: var(--accent-strong);
+      font-weight: 700;
+    }
+
+    .next-button { margin-top: 4px; }
+    [hidden] { display: none !important; }
+
+    .trail { align-self: stretch; }
+
+    .trail-header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 15px;
+      padding: 0 0 16px;
+      border-bottom: 1px solid var(--stage-line);
+    }
+
+    .section-label { margin: 0 0 7px; color: var(--stage-muted); }
+    .trail-title { margin: 0; font-size: 21px; font-weight: 600; }
+    .attempt-count-label { color: var(--stage-muted); font-size: 10px; }
+    .attempt-list { margin: 0; padding: 0; list-style: none; }
+
+    .empty-state {
+      padding: 24px 0;
+      border-bottom: 1px solid var(--stage-line);
+      color: var(--stage-muted);
+      font-size: 14px;
+    }
+
+    .attempt-row {
+      display: grid;
+      grid-template-columns: minmax(100px, 1fr) auto 92px;
+      align-items: center;
+      gap: 16px;
+      min-height: 67px;
+      border-bottom: 1px solid var(--stage-line);
+      animation: arrive 220ms ease-out both;
+    }
+
+    .attempt-word {
+      overflow: hidden;
+      color: var(--stage-ink);
+      font-size: 16px;
+      font-weight: 600;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .distance-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--stage-muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .distance-dot {
+      width: 9px;
+      height: 9px;
+      border: 2px solid var(--accent);
+      border-radius: 50%;
+      background: var(--accent-soft);
+    }
+
+    .attempt-row[data-distance="far"] .distance-dot {
+      border-color: var(--warm);
+      background: var(--warm-soft);
+    }
+
+    .attempt-row[data-distance="mid"] .distance-dot {
+      border-color: #9a6b15;
+      background: #f4e8c9;
+    }
+
+    .distance-meter {
+      display: flex;
+      justify-content: flex-end;
+      gap: 4px;
+    }
+
+    .distance-meter i {
+      display: block;
+      width: 20px;
+      height: 5px;
+      border-radius: 3px;
+      background: var(--stage-line);
+    }
+
+    .attempt-row[data-distance="near"] .distance-meter i:nth-child(-n+3),
+    .attempt-row[data-distance="mid"] .distance-meter i:nth-child(-n+2) { background: var(--accent); }
+
+    .attempt-row[data-distance="far"] .distance-meter i:first-child { background: var(--warm); }
+
+    .concept-visual {
+      position: absolute;
+      right: 42px;
+      bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--stage-muted);
+      font-family: "DM Mono", "Consolas", monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+    }
+
+    .visual-mark {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .visual-mark i {
+      display: block;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    .visual-mark i:nth-child(2) { opacity: .6; }
+    .visual-mark i:nth-child(3) { opacity: .25; }
+
+    .theme-lab {
+      --stage-bg: #172a3a;
+      --stage-ink: #f4f7f8;
+      --stage-muted: #c3d0d3;
+      --stage-line: #3b5360;
+      --accent: #70d6b1;
+      --accent-strong: #97efd0;
+      --accent-soft: #254c4a;
+      --warm: #f2c94c;
+      --warm-soft: #4d4527;
+      border-color: #263d4b;
+      background: var(--stage-bg);
+      color-scheme: dark;
+    }
+
+    .theme-lab .game-grid {
+      grid-template-columns: minmax(0, 1fr);
+      max-width: 800px;
+      gap: 38px;
+      margin-top: 50px;
+    }
+
+    .theme-lab .round-copy { text-align: center; }
+    .theme-lab .round-title {
+      max-width: none;
+      font-family: "Space Grotesk", "Segoe UI", sans-serif;
+      font-size: 48px;
+      font-weight: 600;
+      line-height: 1.05;
+    }
+
+    .theme-lab .round-subtitle { margin: 12px auto 0; }
+    .theme-lab .guess-form { max-width: 590px; margin: 28px auto 0; text-align: left; }
+    .theme-lab .input-row { padding: 5px; border: 1px solid var(--stage-line); border-radius: 7px; background: #203747; }
+    .theme-lab .guess-input { border: 0; background: transparent; }
+    .theme-lab .submit-button,
+    .theme-lab .next-button { border-radius: 4px; color: #102d2a; }
+    .theme-lab .mode-picker { justify-self: center; }
+    .theme-lab .trail { max-width: 730px; width: 100%; margin: 0 auto; }
+    .theme-lab .trail-header { border-bottom-style: dashed; }
+    .theme-lab .trail-title { font-family: "Space Grotesk", "Segoe UI", sans-serif; }
+    .theme-lab .attempt-row { grid-template-columns: minmax(100px, 1fr) auto 150px; }
+    .theme-lab .attempt-word { font-family: "IBM Plex Mono", "Consolas", monospace; font-size: 14px; }
+    .theme-lab .distance-meter i { height: 7px; border-radius: 1px; }
+    .theme-lab .concept-visual { color: #a5b9bf; }
+
+    .theme-poster {
+      --stage-bg: #fffdf8;
+      --stage-ink: #171717;
+      --stage-muted: #454545;
+      --stage-line: #b8b6ae;
+      --accent: #2457d6;
+      --accent-strong: #173f9f;
+      --accent-soft: #dce5fb;
+      --warm: #c93432;
+      --warm-soft: #f7e0dd;
+      border-color: #c9c6bc;
+    }
+
+    .theme-poster .game-header { border-bottom: 3px solid var(--stage-ink); }
+    .theme-poster .wordmark { font-family: "Archivo Black", Impact, sans-serif; font-size: 19px; }
+    .theme-poster .score { border: 0; border-radius: 0; background: #f2d34f; color: #171717; font-weight: 700; }
+    .theme-poster .score strong { color: #171717; }
+    .theme-poster .game-grid {
+      grid-template-columns: minmax(0, 1.15fr) minmax(330px, .85fr);
+      max-width: 1060px;
+      gap: 48px;
+      margin-top: 82px;
+    }
+
+    .theme-poster .round-copy { padding-left: 14px; border-left: 9px solid var(--warm); }
+    .theme-poster .eyebrow { color: var(--warm); }
+    .theme-poster .round-title {
+      max-width: 560px;
+      font-family: "Archivo Black", Impact, sans-serif;
+      font-size: 55px;
+      line-height: .98;
+    }
+
+    .theme-poster .round-subtitle { font-size: 15px; }
+    .theme-poster .guess-form { margin-top: 31px; }
+    .theme-poster .guess-input { border-width: 2px; border-color: #171717; border-radius: 0; }
+    .theme-poster .submit-button,
+    .theme-poster .next-button { border-radius: 0; background: #2457d6; }
+    .theme-poster .mode-picker { border-radius: 0; }
+    .theme-poster .mode-button,
+    .theme-poster .give-up-button { border-radius: 0; }
+    .theme-poster .trail-header { border-bottom: 3px solid #171717; }
+    .theme-poster .trail-title { font-family: "Archivo Black", Impact, sans-serif; font-size: 23px; }
+    .theme-poster .attempt-row { grid-template-columns: 1fr auto; min-height: 75px; }
+    .theme-poster .attempt-row .distance-meter { display: none; }
+    .theme-poster .attempt-word { font-family: "Space Grotesk", sans-serif; font-size: 18px; }
+    .theme-poster .distance-label { padding: 6px 8px; border: 1px solid var(--stage-line); color: var(--stage-ink); font-weight: 600; }
+    .theme-poster .distance-dot { width: 10px; height: 10px; }
+    .theme-poster .concept-visual { color: #454545; }
+
+    @keyframes arrive {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 900px) {
+      .review-shell { width: min(100% - 28px, 620px); padding-top: 18px; }
+      .review-header { align-items: start; padding-bottom: 14px; }
+      .review-title { font-size: 18px; }
+      .review-index { display: none; }
+      .game-header { flex-wrap: wrap; row-gap: 12px; }
+      .mode-picker { order: 3; flex: 1 0 100%; justify-content: center; }
+      .concept-picker { width: 100%; }
+      .concept-tab { flex: 1 1 0; padding: 0 8px; font-size: 13px; }
+      .concept-caption { display: block; min-height: auto; padding: 12px 2px; line-height: 1.45; }
+      .demo-note { display: block; margin-top: 5px; }
+      .game-stage { min-height: 690px; padding: 22px 20px 48px; border-radius: 8px; }
+      .game-grid,
+      .theme-poster .game-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 40px;
+        margin-top: 45px;
+      }
+      .round-title,
+      .theme-lab .round-title,
+      .theme-poster .round-title { font-size: 42px; }
+      .round-subtitle { margin-top: 14px; font-size: 15px; }
+      .guess-form { margin-top: 26px; }
+      .trail-title { font-size: 19px; }
+      .attempt-row { grid-template-columns: minmax(72px, 1fr) auto 66px; gap: 9px; min-height: 62px; }
+      .attempt-word { font-size: 14px; }
+      .distance-label { gap: 5px; font-size: 11px; }
+      .distance-meter { gap: 3px; }
+      .distance-meter i { width: 14px; }
+      .theme-lab .game-grid { margin-top: 45px; }
+      .theme-lab .round-title { font-size: 39px; }
+      .theme-lab .attempt-row { grid-template-columns: minmax(75px, 1fr) auto 92px; }
+      .theme-poster .game-grid { gap: 42px; }
+      .theme-poster .round-copy { padding-left: 10px; border-left-width: 6px; }
+      .theme-poster .attempt-row { grid-template-columns: minmax(0, 1fr) auto; }
+      .concept-visual { right: 20px; bottom: 17px; font-size: 9px; }
+    }
+
+    @media (max-width: 430px) {
+      .review-shell { width: min(100% - 20px, 380px); }
+      .review-kicker { font-size: 9px; }
+      .review-title { font-size: 16px; }
+      .game-stage { padding: 18px 15px 48px; }
+      .score { gap: 6px; padding: 0 8px; font-size: 11px; }
+      .score strong { font-size: 14px; }
+      .round-title,
+      .theme-lab .round-title,
+      .theme-poster .round-title { font-size: 37px; }
+      .input-row { gap: 6px; }
+      .guess-input { min-height: 50px; padding: 0 10px; font-size: 15px; }
+      .submit-button { min-height: 50px; padding: 0 12px; font-size: 13px; }
+      .attempt-row { grid-template-columns: minmax(65px, 1fr) auto 48px; gap: 6px; }
+      .distance-meter i { width: 11px; }
+      .theme-lab .attempt-row { grid-template-columns: minmax(65px, 1fr) auto 60px; }
+      .theme-poster .attempt-row { grid-template-columns: minmax(0, 1fr) auto; }
+      .theme-poster .distance-label { padding: 5px; font-size: 10px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="review-shell">
+    <header class="review-header">
+      <div>
+        <p class="review-kicker">Laboratório de interação · rodada de conceitos</p>
+        <h1 class="review-title">Puxa Palavra / interfaces</h1>
+      </div>
+      <p class="review-index" id="concept-index">Conceito 01 de 03</p>
+    </header>
+
+    <nav class="concept-picker" aria-label="Direções visuais">
+      <button class="concept-tab" type="button" data-theme="atlas" aria-pressed="true">01 · Atlas</button>
+      <button class="concept-tab" type="button" data-theme="lab" aria-pressed="false">02 · Laboratório</button>
+      <button class="concept-tab" type="button" data-theme="poster" aria-pressed="false">03 · Cartaz</button>
+    </nav>
+
+    <div class="concept-caption" aria-live="polite">
+      <p id="concept-description"><strong>Atlas de ideias.</strong> Uma composição editorial onde cada palpite abre um novo caminho.</p>
+      <span class="demo-note">Faixas de proximidade simuladas</span>
+    </div>
+
+    <section class="game-stage theme-atlas" id="game-stage" aria-label="Protótipo interativo Puxa Palavra">
+      <header class="game-header">
+        <span class="wordmark" aria-label="Puxa Palavra">puxa<span class="wordmark-mark">/</span>palavra</span>
+        <nav class="mode-picker" aria-label="Modo de jogo">
+          <button class="mode-button" id="daily-mode" type="button" aria-pressed="true">Desafio diário</button>
+          <button class="mode-button" id="practice-mode" type="button" aria-pressed="false">Treino livre</button>
+        </nav>
+        <div class="score" aria-label="Acertos nesta visita">
+          <span>Acertos</span>
+          <strong id="score-value" aria-live="polite">0</strong>
+        </div>
+      </header>
+
+      <main class="game-grid">
+        <section class="round-copy" aria-labelledby="round-title">
+          <p class="eyebrow" id="round-mode">Desafio de hoje</p>
+          <h2 class="round-title" id="round-title">Uma palavra<br>puxa outra.</h2>
+          <p class="round-subtitle">Às vezes, a resposta está a uma ideia de distância.</p>
+          <p class="round-context" id="round-context">A mesma palavra para todos. Um novo desafio chega à meia-noite de Brasília.</p>
+
+          <form class="guess-form" id="guess-form" autocomplete="off">
+            <label class="field-label" for="guess-input">Seu palpite</label>
+            <div class="input-row">
+              <input class="guess-input" id="guess-input" name="guess" type="text" lang="pt-BR" inputmode="text" autocapitalize="none" spellcheck="false" autocomplete="off" placeholder="Digite uma palavra" aria-describedby="result-status">
+              <button class="submit-button" type="submit">Palpitar</button>
+            </div>
+          </form>
+          <p class="result-status" id="result-status" role="status" aria-live="polite" aria-atomic="true">A rodada está pronta.</p>
+          <button class="give-up-button" id="give-up-button" type="button">Desistir e revelar</button>
+          <button class="next-button" id="next-button" type="button" hidden>Ir para o treino</button>
+        </section>
+
+        <section class="trail" aria-labelledby="trail-title">
+          <header class="trail-header">
+            <div>
+              <p class="section-label">Seu percurso</p>
+              <h3 class="trail-title" id="trail-title">Palavras recentes</h3>
+            </div>
+            <span class="attempt-count-label" id="attempt-count">0 palpites</span>
+          </header>
+          <ol class="attempt-list" id="attempt-list" aria-label="Histórico de palpites" aria-live="polite" aria-relevant="additions">
+            <li class="empty-state" id="empty-state">Nenhuma tentativa nesta rodada.</li>
+          </ol>
+        </section>
+      </main>
+
+      <div class="concept-visual" aria-hidden="true">
+        <span class="visual-mark"><i></i><i></i><i></i></span>
+        <span id="visual-label">ideias em órbita</span>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const concepts = {
+      atlas: {
+        index: "Conceito 01 de 03",
+        description: "<strong>Atlas de ideias.</strong> Uma composição editorial onde cada palpite abre um novo caminho.",
+        visual: "ideias em órbita"
+      },
+      lab: {
+        index: "Conceito 02 de 03",
+        description: "<strong>Laboratório.</strong> Uma leitura analítica da distância entre hipóteses.",
+        visual: "sinal de afinidade"
+      },
+      poster: {
+        index: "Conceito 03 de 03",
+        description: "<strong>Cartaz.</strong> Tipografia expressiva e contraste alto para uma experiência direta.",
+        visual: "sinais de proximidade"
+      }
+    };
+
+    const rounds = [
+      { answer: "biblioteca", near: ["livro", "leitura", "estante", "livraria", "romance", "revista", "página"], mid: ["caderno", "escola", "professor", "estudo", "papel"] },
+      { answer: "cachorro", near: ["cão", "pet", "gato", "coleira", "osso", "latido", "veterinário"], mid: ["animal", "passeio", "ração", "casa", "amizade"] },
+      { answer: "praia", near: ["mar", "areia", "oceano", "onda", "surf", "concha", "litoral"], mid: ["sol", "férias", "barco", "piscina", "verão"] },
+      { answer: "cozinha", near: ["fogão", "panela", "receita", "cozinhar", "forno", "talher", "geladeira"], mid: ["almoço", "comida", "casa", "mesa", "ingrediente"] },
+      { answer: "música", near: ["canção", "melodia", "ritmo", "banda", "instrumento", "concerto", "som"], mid: ["rádio", "dança", "festa", "poesia", "artista"] }
+    ];
+
+    const stage = document.querySelector("#game-stage");
+    const tabs = [...document.querySelectorAll(".concept-tab")];
+    const form = document.querySelector("#guess-form");
+    const input = document.querySelector("#guess-input");
+    const status = document.querySelector("#result-status");
+    const list = document.querySelector("#attempt-list");
+    const emptyState = document.querySelector("#empty-state");
+    const attemptCount = document.querySelector("#attempt-count");
+    const scoreValue = document.querySelector("#score-value");
+    const nextButton = document.querySelector("#next-button");
+    const giveUpButton = document.querySelector("#give-up-button");
+    const dailyModeButton = document.querySelector("#daily-mode");
+    const practiceModeButton = document.querySelector("#practice-mode");
+    const roundMode = document.querySelector("#round-mode");
+    const roundContext = document.querySelector("#round-context");
+    let roundIndex = 0;
+    let mode = "daily";
+    let score = 0;
+    let attempts = 0;
+    let solved = false;
+    let triedWords = new Set();
+
+    function normalizeWord(word) {
+      return word.trim().toLocaleLowerCase("pt-BR").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    }
+
+    function distanceFor(guess, round) {
+      const normalized = normalizeWord(guess);
+      if (normalized === normalizeWord(round.answer)) return "correct";
+      if (round.near.some(word => normalizeWord(word) === normalized)) return "near";
+      if (round.mid.some(word => normalizeWord(word) === normalized)) return "mid";
+      return "far";
+    }
+
+    function distanceText(distance) {
+      if (distance === "near") return "Quente";
+      if (distance === "mid") return "Morno";
+      return "Frio";
+    }
+
+    function updateAttemptCount() {
+      attemptCount.textContent = attempts === 1 ? "1 palpite" : `${attempts} palpites`;
+    }
+
+    function addAttempt(word, distance) {
+      emptyState.hidden = true;
+      const item = document.createElement("li");
+      item.className = "attempt-row";
+      item.dataset.distance = distance;
+
+      const wordLabel = document.createElement("span");
+      wordLabel.className = "attempt-word";
+      wordLabel.textContent = word;
+
+      const resultLabel = document.createElement("span");
+      resultLabel.className = "distance-label";
+      const dot = document.createElement("i");
+      dot.className = "distance-dot";
+      dot.setAttribute("aria-hidden", "true");
+      const resultText = document.createElement("span");
+      resultText.textContent = distanceText(distance);
+      resultLabel.append(dot, resultText);
+
+      const meter = document.createElement("span");
+      meter.className = "distance-meter";
+      meter.setAttribute("aria-hidden", "true");
+      for (let index = 0; index < 3; index += 1) meter.append(document.createElement("i"));
+
+      item.append(wordLabel, resultLabel, meter);
+      list.prepend(item);
+      attempts += 1;
+      updateAttemptCount();
+    }
+
+    function setConcept(theme) {
+      stage.className = `game-stage theme-${theme}`;
+      tabs.forEach(tab => tab.setAttribute("aria-pressed", String(tab.dataset.theme === theme)));
+      document.querySelector("#concept-index").textContent = concepts[theme].index;
+      document.querySelector("#concept-description").innerHTML = concepts[theme].description;
+      document.querySelector("#visual-label").textContent = concepts[theme].visual;
+    }
+
+    function currentRound() {
+      return mode === "daily" ? rounds[0] : rounds[roundIndex];
+    }
+
+    function choosePracticeRound() {
+      const choices = rounds
+        .map((round, index) => index)
+        .filter(index => index > 0 && index !== roundIndex);
+      roundIndex = choices[Math.floor(Math.random() * choices.length)];
+    }
+
+    function finishRound(revealed = false) {
+      solved = true;
+      const answer = currentRound().answer;
+      input.disabled = true;
+      form.querySelector("button[type='submit']").disabled = true;
+      giveUpButton.hidden = true;
+      status.dataset.state = revealed ? "revealed" : "win";
+      status.textContent = revealed ? `A palavra era: ${answer}.` : `Você acertou: ${answer}.`;
+      nextButton.textContent = mode === "daily" ? "Ir para o treino" : "Nova palavra";
+      nextButton.hidden = false;
+      nextButton.focus();
+    }
+
+    function resetRound() {
+      attempts = 0;
+      triedWords = new Set();
+      solved = false;
+      list.replaceChildren(emptyState);
+      emptyState.hidden = false;
+      updateAttemptCount();
+      status.dataset.state = "";
+      status.textContent = "A rodada está pronta.";
+      nextButton.hidden = true;
+      giveUpButton.hidden = false;
+      input.disabled = false;
+      form.querySelector("button[type='submit']").disabled = false;
+      input.value = "";
+      input.focus();
+    }
+
+    function setMode(nextMode) {
+      mode = nextMode;
+      if (mode === "practice") choosePracticeRound();
+      dailyModeButton.setAttribute("aria-pressed", String(mode === "daily"));
+      practiceModeButton.setAttribute("aria-pressed", String(mode === "practice"));
+      roundMode.textContent = mode === "daily" ? "Desafio de hoje" : "Treino livre";
+      roundContext.textContent = mode === "daily"
+        ? "A mesma palavra para todos. Um novo desafio chega à meia-noite de Brasília."
+        : "Pratique sem limite: cada rodada traz uma palavra diferente.";
+      resetRound();
+    }
+
+    tabs.forEach(tab => tab.addEventListener("click", () => setConcept(tab.dataset.theme)));
+    dailyModeButton.addEventListener("click", () => setMode("daily"));
+    practiceModeButton.addEventListener("click", () => setMode("practice"));
+    giveUpButton.addEventListener("click", () => {
+      if (!solved) finishRound(true);
+    });
+
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+      if (solved) return;
+
+      const guess = input.value.trim();
+      if (!guess) {
+        status.dataset.state = "error";
+        status.textContent = "Digite uma palavra para palpitar.";
+        input.focus();
+        return;
+      }
+
+      if (!/^\p{L}+$/u.test(guess)) {
+        status.dataset.state = "error";
+        status.textContent = "Use apenas letras, sem espaços ou números.";
+        input.focus();
+        return;
+      }
+
+      const normalized = normalizeWord(guess);
+      if (triedWords.has(normalized)) {
+        status.dataset.state = "error";
+        status.textContent = "Essa palavra já apareceu nesta rodada.";
+        input.select();
+        return;
+      }
+
+      triedWords.add(normalized);
+      const distance = distanceFor(guess, currentRound());
+      addAttempt(guess, distance);
+      input.value = "";
+      status.dataset.state = "";
+
+      if (distance === "correct") {
+        score += 1;
+        scoreValue.textContent = String(score);
+        finishRound();
+      } else {
+        status.textContent = `Seu palpite está ${distanceText(distance).toLocaleLowerCase("pt-BR")} da palavra.`;
+        input.focus();
+      }
+    });
+
+    nextButton.addEventListener("click", () => {
+      if (mode === "daily") {
+        setMode("practice");
+        return;
+      }
+      choosePracticeRound();
+      resetRound();
+    });
+  </script>
+</body>
+</html>
