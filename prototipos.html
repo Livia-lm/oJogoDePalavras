@@ -743,6 +743,7 @@
     }
 
     function distanceText(distance) {
+      if (distance === "correct") return "Correto";
       if (distance === "near") return "Quente";
       if (distance === "mid") return "Morno";
       return "Frio";

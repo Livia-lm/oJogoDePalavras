@@ -1,0 +1,10 @@
+{
+  "name": "puxa-palavra-prototipo",
+  "private": true,
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
